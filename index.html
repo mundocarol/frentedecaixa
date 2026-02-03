@@ -1,0 +1,2726 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frente de Caixa - Mundo Carol</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --whatsapp: #25D366;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #7f8c8d;
+            --input-bg: #ffffff;
+            --sale-bg: #f0f2f5;
+        }
+
+        body {
+            background-color: #e9ecef;
+            color: #333;
+            line-height: 1.6;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Layout principal compacto */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+            height: calc(100vh - 100px);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        /* Painel de entrada de produtos */
+        .input-panel {
+            background: var(--input-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #dee2e6;
+        }
+
+        .input-panel h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--secondary);
+            font-size: 1.4rem;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 15px;
+            transition: border 0.3s;
+            background-color: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        /* Linha compacta para entrada de produtos */
+        .compact-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 120px;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: end;
+        }
+
+        .compact-row .form-group {
+            margin-bottom: 0;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .btn-whatsapp {
+            background-color: var(--whatsapp);
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #1da851;
+        }
+
+        /* Painel de visualização da venda */
+        .sale-panel {
+            background: var(--sale-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ced4da;
+            position: relative;
+        }
+
+        .sale-panel h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--success);
+            font-size: 1.4rem;
+        }
+
+        .notification-area {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            z-index: 100;
+        }
+
+        .notification {
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .notification-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .notification-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .notification-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .sales-table-container {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: white;
+            margin-top: 10px;
+        }
+
+        .sales-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .sales-table th, .sales-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .sales-table th {
+            background-color: #f1f3f5;
+            font-weight: 600;
+            color: var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .sales-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .total-section {
+            background-color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border: 1px solid #dee2e6;
+        }
+
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .total-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--success);
+            border-top: 2px solid #eee;
+            padding-top: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .actions .btn {
+            flex: 1;
+            padding: 12px 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        /* Estilo do cupom para impressão */
+        .receipt-80mm {
+            font-family: 'Courier New', monospace;
+            width: 80mm;
+            padding: 5px;
+            margin: 0 auto;
+            font-size: 12px;
+            line-height: 1.2;
+        }
+
+        .receipt-80mm .header {
+            text-align: center;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 5px;
+        }
+
+        .receipt-80mm .line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            white-space: nowrap;
+        }
+
+        .receipt-80mm .total-line {
+            border-top: 1px dashed #000;
+            margin-top: 5px;
+            padding-top: 5px;
+            font-weight: bold;
+        }
+
+        .receipt-80mm .footer {
+            text-align: center;
+            margin-top: 10px;
+            border-top: 1px dashed #000;
+            padding-top: 5px;
+        }
+
+        /* =================================================== */
+        /* PRODUTOS RÁPIDOS - COMPACTOS */
+        /* =================================================== */
+        .quick-products {
+            margin-top: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .quick-products h3 {
+            margin-bottom: 3px;
+            color: var(--primary);
+            font-size: 1.1rem;
+            padding: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .edit-quick-products {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            background-color: var(--warning);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .edit-quick-products:hover {
+            background-color: #e67e22;
+        }
+
+        .product-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1px !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding: 0 !important;
+            grid-auto-rows: 42px;
+            align-items: stretch;
+            justify-items: stretch;
+            overflow: visible;
+        }
+
+        .product-btn {
+            margin: 0 !important;
+            padding: 2px 1px !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 40px !important;
+            min-height: 40px !important;
+            max-height: 40px !important;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 11px !important;
+            line-height: 1 !important;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .product-btn:hover {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .product-btn .product-name {
+            font-weight: 600;
+            margin-bottom: 0 !important;
+            font-size: 10px !important;
+            line-height: 1 !important;
+            max-height: 22px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            width: 100%;
+            padding: 0 1px;
+            flex-shrink: 1;
+            min-height: 0;
+        }
+
+        .product-btn .product-price {
+            font-size: 10px !important;
+            color: var(--success);
+            font-weight: 700;
+            line-height: 1 !important;
+            margin-top: 0 !important;
+            padding: 0;
+            height: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Relatório */
+        .report-section {
+            margin-top: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .report-section h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--warning);
+            font-size: 1.3rem;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 30px 15px;
+            color: var(--gray);
+        }
+
+        .empty-cart i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        /* Header compacto */
+        .compact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .compact-header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .header-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Modal de senha */
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Área de texto criptografado */
+        .encrypted-text-area {
+            margin-top: 15px;
+            display: none;
+        }
+
+        .encrypted-text {
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+        }
+
+        /* Botão de enviar ZAP sem senha */
+        .zap-btn-container {
+            margin-top: 10px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .compact-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .product-buttons {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                grid-auto-rows: 40px !important;
+                gap: 1px !important;
+            }
+            
+            .product-btn {
+                height: 38px !important;
+                min-height: 38px !important;
+                max-height: 38px !important;
+                padding: 1px 0 !important;
+            }
+            
+            .compact-header {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+            
+            .notification-area {
+                width: 250px;
+            }
+            
+            .report-actions {
+                flex-direction: column;
+            }
+            
+            .report-actions .btn {
+                width: 100%;
+            }
+            
+            .product-btn .product-name {
+                font-size: 9px !important;
+                max-height: 20px;
+            }
+            
+            .product-btn .product-price {
+                font-size: 9px !important;
+                height: 10px;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-buttons {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+            
+            .product-btn {
+                height: 36px !important;
+                min-height: 36px !important;
+                max-height: 36px !important;
+            }
+            
+            .product-btn .product-name {
+                font-size: 8.5px !important;
+            }
+        }
+
+        /* Estilos específicos */
+        .input-panel {
+            background-color: #ffffff;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .sale-panel {
+            background-color: #f5f7fa;
+            border-left: 4px solid var(--success);
+        }
+
+        /* Estilo para quantidade agrupada */
+        .quantity-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: #f8f9fa;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+        }
+        
+        .quantity-group .quantity-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--primary);
+            padding: 0 2px;
+        }
+        
+        .quantity-group .quantity-value {
+            font-weight: bold;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .vendedor-name {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .whatsapp-instructions {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        /* Estilo para edição de preço na tabela */
+        .price-edit-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .price-display {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .price-edit-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            padding: 2px 5px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+        
+        .price-edit-btn:hover {
+            background-color: #f0f0f0;
+            color: var(--primary);
+        }
+        
+        .price-edit-input {
+            width: 80px;
+            padding: 4px 8px;
+            border: 1px solid var(--secondary);
+            border-radius: 3px;
+            font-size: 0.9rem;
+            text-align: right;
+        }
+        
+        .price-edit-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        /* Estilo para clique múltiplo em produtos rápidos */
+        .quick-click-counter {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+        
+        .product-btn-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .quick-click-reset {
+            font-size: 0.7rem;
+            color: var(--danger);
+            text-align: center;
+            margin-top: 5px;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+        
+        .quick-click-reset:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Estilos para visualização de impressão */
+        .print-preview {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .print-preview, .print-preview * {
+                visibility: visible;
+            }
+            
+            .print-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* Estilos para ações do relatório */
+        .sale-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .sale-action-btn {
+            padding: 3px 8px;
+            font-size: 0.8rem;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .sale-action-btn.print {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .sale-action-btn.delete {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .sale-action-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Estilos para o modal de confirmação de exclusão */
+        .confirm-delete-modal .modal-content {
+            max-width: 400px;
+        }
+        
+        .sale-details {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .sale-details p {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="compact-header">
+            <h1><i class="fas fa-cash-register"></i> Frente de Caixa - Mundo Carol</h1>
+            <div class="header-info">
+                <span id="currentDateTime"></span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="input-panel">
+                <h2><i class="fas fa-plus-circle"></i> Adicionar Produto</h2>
+                
+                <div class="compact-row">
+                    <div class="form-group">
+                        <label for="productQuantity">Qtd</label>
+                        <input type="number" id="productQuantity" class="form-control" value="1" min="1" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="productName">Nome do Produto</label>
+                        <input type="text" id="productName" class="form-control" placeholder="Nome do produto" autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Preço (R$)</label>
+                        <input type="number" id="productPrice" class="form-control" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="addProduct()" id="addProductBtn">
+                    <i class="fas fa-plus"></i> Adicionar (Enter)
+                </button>
+                
+                <div class="quick-products">
+                    <h3>
+                        <span><i class="fas fa-bolt"></i> Produtos Rápidos</span>
+                        <button class="edit-quick-products" onclick="editQuickProducts()">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                    </h3>
+                    <div class="product-buttons" id="quickProducts">
+                        <!-- Produtos rápidos serão adicionados pelo JavaScript -->
+                    </div>
+                    <div id="quickClickInfo" class="quick-click-reset" style="display: none;" onclick="resetQuickClickCounter()">
+                        Clique múltiplo ativo: <span id="quickClickCount">0</span> - Clique aqui para resetar
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sale-panel">
+                <h2><i class="fas fa-shopping-cart"></i> Venda Atual</h2>
+                
+                <div class="notification-area" id="notificationArea">
+                    <!-- Notificações serão adicionadas aqui -->
+                </div>
+                
+                <div class="sales-table-container">
+                    <table class="sales-table" id="salesTable">
+                        <thead>
+                            <tr>
+                                <th width="15%">Qtd</th>
+                                <th width="50%">Produto</th>
+                                <th width="25%">Preço</th>
+                                <th width="10%"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTableBody">
+                            <!-- Itens da venda serão adicionados aqui -->
+                        </tbody>
+                    </table>
+                    
+                    <div id="emptyCart" class="empty-cart">
+                        <i class="fas fa-shopping-basket"></i>
+                        <h3>Carrinho Vazio</h3>
+                        <p>Adicione produtos à venda</p>
+                    </div>
+                </div>
+                
+                <div class="total-section">
+                    <div class="total-line total-amount">
+                        <span>TOTAL:</span>
+                        <span id="total">R$ 0,00</span>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn btn-danger" onclick="clearSale()">
+                        <i class="fas fa-trash"></i> Cancelar
+                    </button>
+                    <button class="btn btn-success" onclick="finishSale()">
+                        <i class="fas fa-check-circle"></i> Finalizar (F12)
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="report-section">
+            <h2><i class="fas fa-chart-bar"></i> Relatório do Dia</h2>
+            
+            <div class="filter-row">
+                <div class="form-group" style="flex: 2;">
+                    <label for="reportDate">Data do Relatório</label>
+                    <input type="date" id="reportDate" class="form-control" value="">
+                </div>
+                <div class="form-group" style="flex: 2;">
+                    <label for="vendedorName">Nome do Vendedor</label>
+                    <input type="text" id="vendedorName" class="form-control" placeholder="Digite seu nome">
+                </div>
+            </div>
+            
+            <div class="report-actions">
+                <button class="btn btn-primary" onclick="generateReport()">
+                    <i class="fas fa-search"></i> Visualizar Relatório
+                </button>
+                <button class="btn btn-whatsapp" onclick="sendEncryptedToWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> Enviar ZAP Criptografado
+                </button>
+                <button class="btn btn-secondary" onclick="reprintLastSale()">
+                    <i class="fas fa-redo"></i> Reimprimir Último
+                </button>
+                <button class="btn btn-warning" onclick="showClearPasswordModal()">
+                    <i class="fas fa-trash-alt"></i> Limpar Dados
+                </button>
+            </div>
+            
+            <!-- Área para texto criptografado -->
+            <div class="encrypted-text-area" id="encryptedTextArea">
+                <h3><i class="fas fa-lock"></i> Texto Criptografado</h3>
+                <p>Copie este texto e envie pelo WhatsApp:</p>
+                <div class="encrypted-text" id="encryptedText"></div>
+                <button class="btn btn-primary copy-btn" onclick="copyEncryptedText()">
+                    <i class="fas fa-copy"></i> Copiar Texto
+                </button>
+                <button class="btn btn-whatsapp copy-btn" onclick="openWhatsAppWithText()">
+                    <i class="fab fa-whatsapp"></i> Abrir WhatsApp
+                </button>
+                <div class="whatsapp-instructions">
+                    <p><strong>Instruções:</strong> Este texto contém o relatório criptografado. O gestor deve colar no decodificador para visualizar.</p>
+                </div>
+            </div>
+            
+            <div id="reportContent">
+                <!-- Conteúdo do relatório será gerado aqui -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para o cupom -->
+    <div class="modal" id="receiptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Cupom Fiscal</h3>
+                <button class="close-modal" onclick="closeReceiptModal()">&times;</button>
+            </div>
+            
+            <div id="receiptContent" class="receipt-80mm">
+                <!-- Conteúdo do cupom será gerado aqui -->
+            </div>
+            
+            <div class="actions">
+                <button class="btn btn-warning" onclick="closeReceiptModal()">
+                    <i class="fas fa-edit"></i> Voltar para Edição
+                </button>
+                <button class="btn btn-success" onclick="confirmSaleAndPrint()">
+                    <i class="fas fa-check"></i> Confirmar e Imprimir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para edição de produtos rápidos -->
+    <div class="modal" id="quickProductsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-boxes"></i> Gerenciar Produtos Rápidos</h3>
+                <button class="close-modal" onclick="closeQuickProductsModal()">&times;</button>
+            </div>
+            
+            <div class="add-product-row">
+                <h4>Adicionar Novo Produto</h4>
+                <div class="filter-row">
+                    <div class="form-group" style="flex: 2;">
+                        <label for="newProductName">Nome do Produto</label>
+                        <input type="text" id="newProductName" class="form-control" placeholder="Ex: Xerox">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="newProductPrice">Preço (R$)</label>
+                        <input type="number" id="newProductPrice" class="form-control" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    <div class="form-group" style="flex: 0.5; margin-top: 25px;">
+                        <button class="btn btn-success" onclick="addNewQuickProduct()">
+                            <i class="fas fa-plus"></i> Adicionar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="max-height: 400px; overflow-y: auto; margin-bottom: 15px;">
+                <table class="products-edit-table">
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="55%">Nome do Produto</th>
+                            <th width="25%">Preço (R$)</th>
+                            <th width="15%">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quickProductsEditBody">
+                        <!-- Produtos para edição serão adicionados aqui -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="actions">
+                <button class="btn btn-warning" onclick="closeQuickProductsModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-success" onclick="saveQuickProducts()">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de senha para limpar dados -->
+    <div class="password-modal" id="clearPasswordModal">
+        <div class="password-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmar Limpeza de Dados</h3>
+                <button class="close-modal" onclick="closeClearPasswordModal()">&times;</button>
+            </div>
+            <p>Digite a senha de administrador para limpar todos os dados:</p>
+            <div class="form-group">
+                <input type="password" id="clearPassword" class="form-control" placeholder="Senha" onkeypress="checkClearPasswordEnter(event)">
+            </div>
+            <div class="actions">
+                <button class="btn btn-warning" onclick="closeClearPasswordModal()">Cancelar</button>
+                <button class="btn btn-danger" onclick="verifyClearPassword()">Limpar Dados</button>
+            </div>
+            <p id="clearPasswordError" style="color: #e74c3c; margin-top: 10px; display: none;">Senha incorreta!</p>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação para excluir pedido -->
+    <div class="modal confirm-delete-modal" id="confirmDeleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-trash"></i> Excluir Pedido</h3>
+                <button class="close-modal" onclick="closeConfirmDeleteModal()">&times;</button>
+            </div>
+            <p>Tem certeza que deseja excluir este pedido?</p>
+            <div id="saleToDeleteDetails" class="sale-details">
+                <!-- Detalhes do pedido serão inseridos aqui -->
+            </div>
+            <div class="actions">
+                <button class="btn btn-warning" onclick="closeConfirmDeleteModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" onclick="deleteConfirmedSale()">
+                    <i class="fas fa-trash"></i> Excluir Pedido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview de impressão (oculto até ser usado) -->
+    <div id="printPreview" class="print-preview"></div>
+
+    <script>
+        // Variáveis globais
+        let currentSale = [];
+        let salesHistory = [];
+        let quickProducts = [];
+        let currentReportData = null;
+        let encryptedText = "";
+        let saleToDelete = null;
+        
+        // Variáveis para clique múltiplo em produtos rápidos
+        let quickClickCounter = 0;
+        let quickClickTimeout = null;
+        let lastClickedProduct = null;
+        const QUICK_CLICK_TIMEOUT_MS = 2000; // 2 segundos para resetar o contador
+        
+        // Senha de administrador
+        const ADMIN_PASSWORD = "Adm456";
+        
+        // Chave de criptografia
+        const ENCRYPTION_KEY = "MUNDOCAROL2024@";
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Atualizar data/hora atual
+            updateDateTime();
+            setInterval(updateDateTime, 60000);
+            
+            // Definir data atual no filtro de relatório
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('reportDate').value = today;
+            
+            // Carregar histórico de vendas
+            loadSalesHistory();
+            
+            // Carregar produtos rápidos do localStorage
+            loadQuickProducts();
+            
+            // Carregar venda atual do localStorage
+            loadCurrentSale();
+            
+            // Inicializar produtos rápidos na interface
+            initializeQuickProducts();
+            
+            // Configurar tecla Enter para adicionar produto
+            document.addEventListener('keydown', function(event) {
+                // Enter para adicionar produto
+                if (event.key === 'Enter' && 
+                    !event.target.matches('#clearPassword') &&
+                    !event.target.matches('#newProductName') &&
+                    !event.target.matches('#newProductPrice')) {
+                    
+                    // Verificar se está editando um preço na tabela
+                    const activePriceEdit = document.querySelector('.price-edit-input:focus');
+                    if (activePriceEdit) {
+                        // Se estiver editando um preço, confirmar com Enter
+                        event.preventDefault();
+                        confirmPriceEdit(activePriceEdit);
+                        return;
+                    }
+                    
+                    event.preventDefault();
+                    addProduct();
+                }
+                
+                // F12 para finalizar venda
+                if (event.key === 'F12') {
+                    event.preventDefault();
+                    finishSale();
+                }
+                
+                // Esc para cancelar edição de preço
+                if (event.key === 'Escape') {
+                    const activePriceEdit = document.querySelector('.price-edit-input:focus');
+                    if (activePriceEdit) {
+                        event.preventDefault();
+                        cancelPriceEdit(activePriceEdit);
+                    }
+                }
+            });
+            
+            // Focar no campo de nome do produto ao iniciar
+            document.getElementById('productName').focus();
+        });
+        
+        // Atualizar data/hora no cabeçalho
+        function updateDateTime() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('pt-BR');
+            const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('currentDateTime').textContent = `${dateStr} - ${timeStr}`;
+        }
+        
+        // Carregar produtos rápidos do localStorage
+        function loadQuickProducts() {
+            const storedProducts = localStorage.getItem('quickProducts');
+            
+            if (storedProducts) {
+                quickProducts = JSON.parse(storedProducts);
+            } else {
+                // Apenas Xerox 0,50 como produto padrão
+                quickProducts = [
+                    { id: 1, name: "Xerox", price: 0.50 }
+                ];
+                
+                // Salvar no localStorage
+                saveQuickProductsToStorage();
+            }
+        }
+        
+        // Função de criptografia avançada
+        function encryptData(data) {
+            try {
+                // Converter para string JSON
+                const jsonString = JSON.stringify(data);
+                
+                // Cifra de substituição dupla
+                let encrypted = jsonString;
+                
+                // Primeira camada: Base64
+                encrypted = btoa(unescape(encodeURIComponent(encrypted)));
+                
+                // Segunda camada: Reverter e adicionar chave
+                encrypted = encrypted.split('').reverse().join('');
+                encrypted = ENCRYPTION_KEY + encrypted;
+                
+                // Terceira camada: Substituição de caracteres
+                const charMap = {
+                    'A': 'X', 'B': 'Y', 'C': 'Z', 'D': 'W',
+                    'E': 'V', 'F': 'U', 'G': 'T', 'H': 'S',
+                    'I': 'R', 'J': 'Q', 'K': 'P', 'L': 'O',
+                    'M': 'N', 'N': 'M', 'O': 'L', 'P': 'K',
+                    'Q': 'J', 'R': 'I', 'S': 'H', 'T': 'G',
+                    'U': 'F', 'V': 'E', 'W': 'D', 'X': 'C',
+                    'Y': 'B', 'Z': 'A',
+                    'a': 'x', 'b': 'y', 'c': 'z', 'd': 'w',
+                    'e': 'v', 'f': 'u', 'g': 't', 'h': 's',
+                    'i': 'r', 'j': 'q', 'k': 'p', 'l': 'o',
+                    'm': 'n', 'n': 'm', 'o': 'l', 'p': 'k',
+                    'q': 'j', 'r': 'i', 's': 'h', 't': 'g',
+                    'u': 'f', 'v': 'e', 'w': 'd', 'x': 'c',
+                    'y': 'b', 'z': 'a',
+                    '0': '9', '1': '8', '2': '7', '3': '6',
+                    '4': '5', '5': '4', '6': '3', '7': '2',
+                    '8': '1', '9': '0',
+                    '+': '-', '/': '_', '=': '~'
+                };
+                
+                let finalEncrypted = '';
+                for (let i = 0; i < encrypted.length; i++) {
+                    const char = encrypted[i];
+                    finalEncrypted += charMap[char] || char;
+                }
+                
+                // Quarta camada: Base64 novamente
+                finalEncrypted = btoa(finalEncrypted);
+                
+                return finalEncrypted;
+            } catch (error) {
+                console.error('Erro na criptografia:', error);
+                return null;
+            }
+        }
+        
+        // Carregar venda atual do localStorage
+        function loadCurrentSale() {
+            const storedCurrentSale = localStorage.getItem('currentSale');
+            
+            if (storedCurrentSale) {
+                try {
+                    currentSale = JSON.parse(storedCurrentSale);
+                    updateSalesTable();
+                    showNotification('Venda atual restaurada com sucesso!', 'success');
+                } catch (e) {
+                    console.error('Erro ao carregar venda atual:', e);
+                    currentSale = [];
+                }
+            }
+        }
+        
+        // Salvar venda atual no localStorage
+        function saveCurrentSale() {
+            localStorage.setItem('currentSale', JSON.stringify(currentSale));
+        }
+        
+        // Salvar produtos rápidos no localStorage
+        function saveQuickProductsToStorage() {
+            localStorage.setItem('quickProducts', JSON.stringify(quickProducts));
+        }
+        
+        // Inicializar produtos rápidos na interface
+        function initializeQuickProducts() {
+            const quickProductsContainer = document.getElementById('quickProducts');
+            quickProductsContainer.innerHTML = '';
+            
+            quickProducts.forEach(product => {
+                const container = document.createElement('div');
+                container.className = 'product-btn-container';
+                
+                const button = document.createElement('button');
+                button.className = 'product-btn';
+                button.setAttribute('data-product-id', product.id);
+                button.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">R$ ${product.price.toFixed(2)}</div>
+                `;
+                button.onclick = () => handleQuickProductClick(product);
+                
+                container.appendChild(button);
+                quickProductsContainer.appendChild(container);
+            });
+        }
+        
+        // Lidar com clique em produto rápido (com clique múltiplo)
+        function handleQuickProductClick(product) {
+            // Se for um produto diferente ou passou o tempo limite, resetar o contador
+            if (lastClickedProduct !== product.id || (quickClickTimeout && Date.now() > quickClickTimeout)) {
+                quickClickCounter = 0;
+                lastClickedProduct = product.id;
+            }
+            
+            // Incrementar contador
+            quickClickCounter++;
+            
+            // Atualizar timeout (2 segundos para resetar)
+            clearQuickClickTimeout();
+            quickClickTimeout = Date.now() + QUICK_CLICK_TIMEOUT_MS;
+            
+            // Atualizar exibição do contador
+            updateQuickClickDisplay(product);
+            
+            // Se for o primeiro clique, adicionar o produto normalmente
+            if (quickClickCounter === 1) {
+                addQuickProductToCart(product);
+            } else {
+                // Se for clique múltiplo, apenas aumentar a quantidade do produto no carrinho
+                increaseProductQuantityInCart(product);
+                showNotification(`${quickClickCounter}x ${product.name} adicionado ao carrinho!`, 'success');
+            }
+            
+            // Atualizar contador na interface
+            document.getElementById('quickClickCount').textContent = quickClickCounter;
+            document.getElementById('quickClickInfo').style.display = 'block';
+            
+            // Configurar timeout para resetar o contador após 2 segundos de inatividade
+            setTimeout(() => {
+                if (Date.now() >= quickClickTimeout) {
+                    resetQuickClickCounter();
+                }
+            }, QUICK_CLICK_TIMEOUT_MS);
+        }
+        
+        // Adicionar produto rápido ao carrinho
+        function addQuickProductToCart(product) {
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productPrice').value = product.price;
+            
+            // Verificar se já existe o mesmo produto na venda atual
+            const existingProductIndex = currentSale.findIndex(p => 
+                p.name === product.name && p.price === product.price
+            );
+            
+            if (existingProductIndex !== -1) {
+                // Se já existe, aumentar a quantidade
+                currentSale[existingProductIndex].quantity += 1;
+                currentSale[existingProductIndex].total = currentSale[existingProductIndex].price * currentSale[existingProductIndex].quantity;
+                updateSalesTable();
+                saveCurrentSale();
+                showNotification(`Quantidade de "${product.name}" aumentada para ${currentSale[existingProductIndex].quantity}`, 'success');
+            } else {
+                // Se não existe, definir quantidade como 1
+                document.getElementById('productQuantity').value = 1;
+                document.getElementById('productQuantity').focus();
+                document.getElementById('productQuantity').select();
+            }
+        }
+        
+        // Aumentar quantidade de produto no carrinho
+        function increaseProductQuantityInCart(product) {
+            const existingProductIndex = currentSale.findIndex(p => 
+                p.name === product.name && p.price === product.price
+            );
+            
+            if (existingProductIndex !== -1) {
+                // Se já existe, aumentar a quantidade
+                currentSale[existingProductIndex].quantity += 1;
+                currentSale[existingProductIndex].total = currentSale[existingProductIndex].price * currentSale[existingProductIndex].quantity;
+                updateSalesTable();
+                saveCurrentSale();
+            } else {
+                // Se não existe, adicionar novo produto com quantidade do contador
+                const productToAdd = {
+                    id: Date.now(),
+                    name: product.name,
+                    price: product.price,
+                    quantity: quickClickCounter,
+                    total: product.price * quickClickCounter
+                };
+                
+                currentSale.push(productToAdd);
+                updateSalesTable();
+                saveCurrentSale();
+            }
+        }
+        
+        // Atualizar exibição do contador de clique rápido
+        function updateQuickClickDisplay(product) {
+            // Remover contadores anteriores
+            const existingCounters = document.querySelectorAll('.quick-click-counter');
+            existingCounters.forEach(counter => counter.remove());
+            
+            // Adicionar novo contador ao botão do produto clicado
+            const productButton = document.querySelector(`.product-btn[data-product-id="${product.id}"]`);
+            if (productButton && quickClickCounter > 1) {
+                const counterDiv = document.createElement('div');
+                counterDiv.className = 'quick-click-counter';
+                counterDiv.textContent = quickClickCounter;
+                productButton.parentElement.appendChild(counterDiv);
+            }
+        }
+        
+        // Resetar contador de clique rápido
+        function resetQuickClickCounter() {
+            quickClickCounter = 0;
+            lastClickedProduct = null;
+            clearQuickClickTimeout();
+            
+            // Remover contadores da interface
+            const existingCounters = document.querySelectorAll('.quick-click-counter');
+            existingCounters.forEach(counter => counter.remove());
+            
+            // Ocultar informação de clique múltiplo
+            document.getElementById('quickClickInfo').style.display = 'none';
+        }
+        
+        // Limpar timeout do clique rápido
+        function clearQuickClickTimeout() {
+            if (quickClickTimeout) {
+                clearTimeout(quickClickTimeout);
+                quickClickTimeout = null;
+            }
+        }
+        
+        // Adicionar produto à venda (com agrupamento)
+        function addProduct() {
+            const name = document.getElementById('productName').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+            
+            if (!name) {
+                showNotification('Por favor, digite o nome do produto.', 'error');
+                document.getElementById('productName').focus();
+                return;
+            }
+            
+            if (isNaN(price) || price <= 0) {
+                showNotification('Por favor, digite um preço válido.', 'error');
+                document.getElementById('productPrice').focus();
+                return;
+            }
+            
+            if (isNaN(quantity) || quantity <= 0) {
+                showNotification('Por favor, digite uma quantidade válida.', 'error');
+                document.getElementById('productQuantity').focus();
+                return;
+            }
+            
+            // Verificar se já existe produto com mesmo nome e preço
+            const existingProductIndex = currentSale.findIndex(product => 
+                product.name === name && product.price === price
+            );
+            
+            if (existingProductIndex !== -1) {
+                // Se já existe, aumentar a quantidade
+                currentSale[existingProductIndex].quantity += quantity;
+                currentSale[existingProductIndex].total = currentSale[existingProductIndex].price * currentSale[existingProductIndex].quantity;
+                showNotification(`Quantidade de "${name}" atualizada para ${currentSale[existingProductIndex].quantity}`, 'success');
+            } else {
+                // Se não existe, adicionar novo produto
+                const product = {
+                    id: Date.now(),
+                    name: name,
+                    price: price,
+                    quantity: quantity,
+                    total: price * quantity
+                };
+                
+                currentSale.push(product);
+                showNotification(`"${name}" adicionado à venda.`, 'success');
+            }
+            
+            updateSalesTable();
+            saveCurrentSale();
+            
+            // Limpar campos e focar no nome
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productQuantity').value = 1;
+            document.getElementById('productName').focus();
+            
+            // Resetar contador de clique rápido
+            resetQuickClickCounter();
+        }
+        
+        // Atualizar tabela de vendas com agrupamento e edição de preço
+        function updateSalesTable() {
+            const tableBody = document.getElementById('salesTableBody');
+            const emptyCart = document.getElementById('emptyCart');
+            const salesTable = document.getElementById('salesTable');
+            
+            if (currentSale.length === 0) {
+                tableBody.innerHTML = '';
+                emptyCart.style.display = 'block';
+                salesTable.style.display = 'none';
+                updateTotals();
+                return;
+            }
+            
+            emptyCart.style.display = 'none';
+            salesTable.style.display = 'table';
+            
+            tableBody.innerHTML = '';
+            
+            // Agrupar produtos por nome e preço
+            const groupedProducts = {};
+            
+            currentSale.forEach(product => {
+                const key = `${product.name}_${product.price}_${product.id}`;
+                if (!groupedProducts[key]) {
+                    groupedProducts[key] = {
+                        name: product.name,
+                        price: product.price,
+                        quantity: product.quantity,
+                        total: product.total,
+                        id: product.id,
+                        isEditing: false
+                    };
+                } else {
+                    groupedProducts[key].quantity += product.quantity;
+                    groupedProducts[key].total += product.total;
+                }
+            });
+            
+            // Exibir produtos agrupados
+            Object.values(groupedProducts).forEach(product => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-product-id', product.id);
+                row.setAttribute('data-product-name', product.name);
+                row.setAttribute('data-product-price', product.price);
+                
+                let priceCellContent;
+                
+                if (product.isEditing) {
+                    priceCellContent = `
+                        <div class="price-edit-container">
+                            <input type="number" 
+                                   class="price-edit-input" 
+                                   value="${product.price}"
+                                   step="0.01"
+                                   min="0.01"
+                                   data-product-id="${product.id}"
+                                   onblur="cancelPriceEdit(this)">
+                            <button class="btn btn-success btn-sm" onclick="confirmPriceEdit(this.previousElementSibling)">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    priceCellContent = `
+                        <div class="price-edit-container">
+                            <span class="price-display">R$ ${product.price.toFixed(2)}</span>
+                            <button class="price-edit-btn" onclick="enablePriceEdit('${product.name}', ${product.price}, ${product.id})" title="Editar preço">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="quantity-group">
+                            <button class="quantity-btn" onclick="decreaseQuantity('${product.name}', ${product.price}, ${product.id})">-</button>
+                            <span class="quantity-value">${product.quantity}</span>
+                            <button class="quantity-btn" onclick="increaseQuantity('${product.name}', ${product.price}, ${product.id})">+</button>
+                        </div>
+                    </td>
+                    <td>${product.name}</td>
+                    <td>${priceCellContent}</td>
+                    <td>
+                        <span class="delete-row" onclick="removeProductGroup('${product.name}', ${product.price}, ${product.id})" title="Remover produto">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            updateTotals();
+        }
+        
+        // Habilitar edição de preço
+        function enablePriceEdit(name, price, id) {
+            // Desabilitar todas as outras edições
+            const allRows = document.querySelectorAll('#salesTableBody tr');
+            allRows.forEach(row => {
+                const rowId = row.getAttribute('data-product-id');
+                if (parseInt(rowId) !== id) {
+                    const priceCell = row.querySelector('td:nth-child(3)');
+                    if (priceCell) {
+                        priceCell.innerHTML = `
+                            <div class="price-edit-container">
+                                <span class="price-display">R$ ${parseFloat(row.getAttribute('data-product-price')).toFixed(2)}</span>
+                                <button class="price-edit-btn" onclick="enablePriceEdit('${row.getAttribute('data-product-name')}', ${row.getAttribute('data-product-price')}, ${rowId})" title="Editar preço">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            });
+            
+            // Habilitar edição para o item específico
+            const targetRow = document.querySelector(`tr[data-product-id="${id}"]`);
+            if (targetRow) {
+                const priceCell = targetRow.querySelector('td:nth-child(3)');
+                if (priceCell) {
+                    priceCell.innerHTML = `
+                        <div class="price-edit-container">
+                            <input type="number" 
+                                   class="price-edit-input" 
+                                   value="${price}"
+                                   step="0.01"
+                                   min="0.01"
+                                   data-product-id="${id}"
+                                   onblur="cancelPriceEdit(this)"
+                                   autofocus>
+                            <button class="btn btn-success btn-sm" onclick="confirmPriceEdit(this.previousElementSibling)">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Focar no campo de entrada
+                    const input = priceCell.querySelector('.price-edit-input');
+                    if (input) {
+                        input.focus();
+                        input.select();
+                    }
+                }
+            }
+        }
+        
+        // Confirmar edição de preço
+        function confirmPriceEdit(inputElement) {
+            const newPrice = parseFloat(inputElement.value);
+            const productId = parseInt(inputElement.getAttribute('data-product-id'));
+            
+            if (isNaN(newPrice) || newPrice <= 0) {
+                showNotification('Por favor, digite um preço válido.', 'error');
+                inputElement.focus();
+                inputElement.select();
+                return;
+            }
+            
+            // Encontrar e atualizar todos os produtos com esse ID
+            let updated = false;
+            currentSale.forEach(product => {
+                if (product.id === productId) {
+                    product.price = newPrice;
+                    product.total = product.price * product.quantity;
+                    updated = true;
+                }
+            });
+            
+            if (updated) {
+                updateSalesTable();
+                saveCurrentSale();
+                showNotification('Preço atualizado com sucesso!', 'success');
+                
+                // Focar no campo de nome do produto
+                document.getElementById('productName').focus();
+            }
+        }
+        
+        // Cancelar edição de preço
+        function cancelPriceEdit(inputElement) {
+            const productId = parseInt(inputElement.getAttribute('data-product-id'));
+            const targetRow = document.querySelector(`tr[data-product-id="${productId}"]`);
+            
+            if (targetRow) {
+                const name = targetRow.getAttribute('data-product-name');
+                const price = parseFloat(targetRow.getAttribute('data-product-price'));
+                
+                const priceCell = targetRow.querySelector('td:nth-child(3)');
+                if (priceCell) {
+                    priceCell.innerHTML = `
+                        <div class="price-edit-container">
+                            <span class="price-display">R$ ${price.toFixed(2)}</span>
+                            <button class="price-edit-btn" onclick="enablePriceEdit('${name}', ${price}, ${productId})" title="Editar preço">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Focar no campo de nome do produto
+            document.getElementById('productName').focus();
+        }
+        
+        // Aumentar quantidade de um produto
+        function increaseQuantity(name, price, id) {
+            const existingProductIndex = currentSale.findIndex(p => p.name === name && p.price === price && p.id === id);
+            if (existingProductIndex !== -1) {
+                currentSale[existingProductIndex].quantity += 1;
+                currentSale[existingProductIndex].total = currentSale[existingProductIndex].price * currentSale[existingProductIndex].quantity;
+                updateSalesTable();
+                saveCurrentSale();
+            }
+        }
+        
+        // Diminuir quantidade de um produto
+        function decreaseQuantity(name, price, id) {
+            const existingProductIndex = currentSale.findIndex(p => p.name === name && p.price === price && p.id === id);
+            if (existingProductIndex !== -1) {
+                if (currentSale[existingProductIndex].quantity > 1) {
+                    currentSale[existingProductIndex].quantity -= 1;
+                    currentSale[existingProductIndex].total = currentSale[existingProductIndex].price * currentSale[existingProductIndex].quantity;
+                } else {
+                    currentSale.splice(existingProductIndex, 1);
+                }
+                updateSalesTable();
+                saveCurrentSale();
+            }
+        }
+        
+        // Remover grupo de produtos
+        function removeProductGroup(name, price, id) {
+            currentSale = currentSale.filter(product => !(product.name === name && product.price === price && product.id === id));
+            updateSalesTable();
+            saveCurrentSale();
+            showNotification(`${name} removido da venda.`, 'success');
+        }
+        
+        // Atualizar totais
+        function updateTotals() {
+            let total = 0;
+            currentSale.forEach(product => {
+                total += product.total;
+            });
+            
+            document.getElementById('total').textContent = `R$ ${total.toFixed(2)}`;
+        }
+        
+        // Funções para produtos rápidos
+        function showQuickProductsModal() {
+            loadEditQuickProductsTable();
+            document.getElementById('quickProductsModal').style.display = 'flex';
+            document.getElementById('newProductName').focus();
+        }
+        
+        function closeQuickProductsModal() {
+            document.getElementById('quickProductsModal').style.display = 'none';
+            document.getElementById('newProductName').value = '';
+            document.getElementById('newProductPrice').value = '';
+        }
+        
+        function editQuickProducts() {
+            showQuickProductsModal();
+        }
+        
+        function loadEditQuickProductsTable() {
+            const editBody = document.getElementById('quickProductsEditBody');
+            editBody.innerHTML = '';
+            
+            quickProducts.forEach((product, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        <input type="text" class="form-control edit-product-name" 
+                               value="${product.name}" 
+                               data-id="${product.id}">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control edit-product-price" 
+                               value="${product.price}" 
+                               step="0.01" min="0" 
+                               data-id="${product.id}">
+                    </td>
+                    <td class="actions-cell">
+                        <button class="action-btn btn-danger" onclick="deleteQuickProduct(${product.id})" title="Remover produto">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                editBody.appendChild(row);
+            });
+        }
+        
+        function addNewQuickProduct() {
+            const name = document.getElementById('newProductName').value.trim();
+            const price = parseFloat(document.getElementById('newProductPrice').value);
+            
+            if (!name) {
+                showNotification('Por favor, digite o nome do produto.', 'error');
+                document.getElementById('newProductName').focus();
+                return;
+            }
+            
+            if (isNaN(price) || price <= 0) {
+                showNotification('Por favor, digite um preço válido.', 'error');
+                document.getElementById('newProductPrice').focus();
+                return;
+            }
+            
+            const newId = quickProducts.length > 0 
+                ? Math.max(...quickProducts.map(p => p.id)) + 1 
+                : 1;
+            
+            quickProducts.push({
+                id: newId,
+                name: name,
+                price: price
+            });
+            
+            loadEditQuickProductsTable();
+            document.getElementById('newProductName').value = '';
+            document.getElementById('newProductPrice').value = '';
+            document.getElementById('newProductName').focus();
+            
+            showNotification(`Produto "${name}" adicionado à lista.`, 'success');
+        }
+        
+        function deleteQuickProduct(productId) {
+            if (!confirm('Tem certeza que deseja remover este produto rápido?')) {
+                return;
+            }
+            
+            const product = quickProducts.find(p => p.id === productId);
+            quickProducts = quickProducts.filter(p => p.id !== productId);
+            
+            loadEditQuickProductsTable();
+            showNotification(`Produto "${product.name}" removido.`, 'success');
+        }
+        
+        function saveQuickProducts() {
+            const nameInputs = document.querySelectorAll('.edit-product-name');
+            const priceInputs = document.querySelectorAll('.edit-product-price');
+            
+            nameInputs.forEach(input => {
+                const productId = parseInt(input.getAttribute('data-id'));
+                const product = quickProducts.find(p => p.id === productId);
+                
+                if (product) {
+                    product.name = input.value.trim();
+                }
+            });
+            
+            priceInputs.forEach(input => {
+                const productId = parseInt(input.getAttribute('data-id'));
+                const product = quickProducts.find(p => p.id === productId);
+                
+                if (product) {
+                    const price = parseFloat(input.value);
+                    if (!isNaN(price) && price >= 0) {
+                        product.price = price;
+                    }
+                }
+            });
+            
+            saveQuickProductsToStorage();
+            initializeQuickProducts();
+            closeQuickProductsModal();
+            
+            showNotification('Produtos rápidos salvos com sucesso!', 'success');
+        }
+        
+        // Finalizar venda
+        function finishSale() {
+            if (currentSale.length === 0) {
+                showNotification('Adicione produtos à venda antes de finalizar.', 'error');
+                return;
+            }
+            
+            const total = currentSale.reduce((sum, product) => sum + product.total, 0);
+            generateReceiptContent(total);
+            document.getElementById('receiptModal').style.display = 'flex';
+        }
+        
+        // Fechar modal do cupom
+        function closeReceiptModal() {
+            document.getElementById('receiptModal').style.display = 'none';
+        }
+        
+        // Gerar conteúdo do cupom
+        function generateReceiptContent(total) {
+            const receiptContent = document.getElementById('receiptContent');
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('pt-BR');
+            const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            let receiptHTML = `
+                <div class="header">
+                    <div><strong>MUNDO CAROL</strong></div>
+                    <div>Praça Santuário São Geraldo 46</div>
+                    <div>Bairro São Geraldo BH/MG</div>
+                    <div>CNPJ: 10.648.303/0001-79</div>
+                    <div>${dateStr} ${timeStr}</div>
+                </div>
+                <div style="border-bottom: 1px dashed #000; margin: 5px 0;"></div>
+            `;
+            
+            // Agrupar produtos para o cupom
+            const groupedProducts = {};
+            currentSale.forEach(product => {
+                const key = `${product.name}_${product.price}`;
+                if (!groupedProducts[key]) {
+                    groupedProducts[key] = {
+                        name: product.name,
+                        price: product.price,
+                        quantity: product.quantity,
+                        total: product.total
+                    };
+                } else {
+                    groupedProducts[key].quantity += product.quantity;
+                    groupedProducts[key].total += product.total;
+                }
+            });
+            
+            Object.values(groupedProducts).forEach(product => {
+                const productName = product.name.length > 20 ? product.name.substring(0, 20) + "..." : product.name;
+                receiptHTML += `
+                    <div class="line">
+                        <div>${product.quantity}x ${productName}</div>
+                        <div>R$ ${product.total.toFixed(2)}</div>
+                    </div>
+                `;
+            });
+            
+            receiptHTML += `
+                <div style="border-top: 1px dashed #000; margin: 5px 0;"></div>
+                <div class="line total-line">
+                    <div><strong>TOTAL</strong></div>
+                    <div><strong>R$ ${total.toFixed(2)}</strong></div>
+                </div>
+                <div class="footer">
+                    <div><strong>Obrigado pela preferência!</strong></div>
+                    <div>Volte sempre à Mundo Carol</div>
+                </div>
+            `;
+            
+            receiptContent.innerHTML = receiptHTML;
+        }
+        
+        // Confirmar venda e imprimir
+        function confirmSaleAndPrint() {
+            const total = currentSale.reduce((sum, product) => sum + product.total, 0);
+            const now = new Date();
+            
+            const sale = {
+                id: Date.now(),
+                date: now.toISOString().split('T')[0],
+                timestamp: now.toISOString(),
+                products: [...currentSale],
+                total: total
+            };
+            
+            salesHistory.push(sale);
+            saveSalesToStorage();
+            closeReceiptModal();
+            printReceipt();
+            clearSaleAfterConfirm();
+            showNotification('Pedido incluído com sucesso!', 'success');
+        }
+        
+        // Imprimir cupom
+        function printReceipt() {
+            const receiptContent = document.getElementById('receiptContent').innerHTML;
+            
+            // Criar uma nova janela para impressão
+            const printWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Cupom Fiscal - Mundo Carol</title>
+                    <style>
+                        body {
+                            font-family: 'Courier New', monospace;
+                            font-size: 14px;
+                            line-height: 1.2;
+                            margin: 20px;
+                            padding: 0;
+                        }
+                        .header {
+                            text-align: center;
+                            margin-bottom: 10px;
+                            border-bottom: 1px dashed #000;
+                            padding-bottom: 10px;
+                        }
+                        .line {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-bottom: 5px;
+                            white-space: nowrap;
+                        }
+                        .total-line {
+                            border-top: 1px dashed #000;
+                            margin-top: 10px;
+                            padding-top: 10px;
+                            font-weight: bold;
+                        }
+                        .footer {
+                            text-align: center;
+                            margin-top: 20px;
+                            border-top: 1px dashed #000;
+                            padding-top: 10px;
+                        }
+                        @media print {
+                            body {
+                                font-size: 12px;
+                                margin: 5px;
+                            }
+                            .print-btn {
+                                display: none;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${receiptContent}
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button class="print-btn" onclick="window.print()" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            <i class="fas fa-print"></i> Imprimir
+                        </button>
+                        <button class="print-btn" onclick="window.close()" style="padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                            <i class="fas fa-times"></i> Fechar
+                        </button>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+        }
+        
+        // Limpar venda após confirmação
+        function clearSaleAfterConfirm() {
+            currentSale = [];
+            localStorage.removeItem('currentSale');
+            updateSalesTable();
+            document.getElementById('productName').focus();
+        }
+        
+        // Limpar venda
+        function clearSale() {
+            if (currentSale.length > 0 && !confirm('Tem certeza que deseja cancelar esta venda?')) {
+                return;
+            }
+            
+            currentSale = [];
+            localStorage.removeItem('currentSale');
+            updateSalesTable();
+            document.getElementById('productName').focus();
+            
+            showNotification('Venda cancelada.', 'success');
+        }
+        
+        // Carregar histórico
+        function loadSalesHistory() {
+            const storedHistory = localStorage.getItem('salesHistory');
+            salesHistory = storedHistory ? JSON.parse(storedHistory) : [];
+        }
+        
+        // Salvar histórico
+        function saveSalesToStorage() {
+            localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+        }
+        
+        // Gerar relatório (com senha)
+        function generateReport() {
+            const selectedDate = document.getElementById('reportDate').value;
+            const vendedorName = document.getElementById('vendedorName').value.trim();
+            
+            if (!selectedDate) {
+                showNotification('Por favor, selecione uma data.', 'error');
+                return;
+            }
+            
+            // Pedir senha
+            const password = prompt('Digite a senha de administrador para visualizar o relatório:');
+            
+            if (password !== ADMIN_PASSWORD) {
+                showNotification('Senha incorreta!', 'error');
+                return;
+            }
+            
+            const selectedSales = salesHistory.filter(sale => sale.date === selectedDate);
+            
+            if (selectedSales.length === 0) {
+                document.getElementById('reportContent').innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Nenhuma venda encontrada para ${selectedDate}</h3>
+                        <p>Realize vendas para gerar um relatório</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let totalDay = 0;
+            let reportHTML = `
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Data do Relatório</label>
+                        <input type="date" class="form-control" value="${selectedDate}" onchange="document.getElementById('reportDate').value = this.value; generateReport()">
+                    </div>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #dee2e6;">
+                    <div style="text-align: center; margin-bottom: 15px; border-bottom: 2px solid var(--warning); padding-bottom: 10px;">
+                        <h3 style="color: var(--primary); margin: 0;">RELATÓRIO MUNDO CAROL</h3>
+                        <div style="margin-top: 5px;">
+                            <strong>Data:</strong> ${selectedDate} | 
+                            <strong>Vendedor:</strong> ${vendedorName || "Não informado"} | 
+                            <strong>Total de Vendas:</strong> ${selectedSales.length}
+                        </div>
+                    </div>
+            `;
+            
+            selectedSales.forEach((sale, index) => {
+                totalDay += sale.total;
+                const saleTime = sale.timestamp ? new Date(sale.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+                
+                // Contar produtos únicos
+                const uniqueProducts = {};
+                sale.products.forEach(product => {
+                    const key = `${product.name}_${product.price}`;
+                    if (!uniqueProducts[key]) {
+                        uniqueProducts[key] = {
+                            name: product.name,
+                            price: product.price,
+                            quantity: product.quantity
+                        };
+                    } else {
+                        uniqueProducts[key].quantity += product.quantity;
+                    }
+                });
+                
+                const uniqueProductsCount = Object.keys(uniqueProducts).length;
+                
+                reportHTML += `
+                    <div style="margin-bottom: 15px; padding: 15px; border: 1px solid #eee; border-radius: 5px; background: #f9f9f9;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div>
+                                <strong style="color: var(--primary);">Venda ${index + 1}</strong>
+                                <div style="font-size: 0.9em; color: #666;">${saleTime} • ${uniqueProductsCount} item(s)</div>
+                            </div>
+                            <div style="font-weight: bold; color: var(--success);">R$ ${sale.total.toFixed(2)}</div>
+                        </div>
+                `;
+                
+                // Listar produtos
+                Object.values(uniqueProducts).forEach(product => {
+                    const productName = product.name.length > 25 ? product.name.substring(0, 25) + "..." : product.name;
+                    reportHTML += `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 3px; padding-left: 10px; font-size: 0.9em;">
+                            <div>${product.quantity}x ${productName}</div>
+                            <div>R$ ${(product.price * product.quantity).toFixed(2)}</div>
+                        </div>
+                    `;
+                });
+                
+                // Adicionar botões de ação
+                reportHTML += `
+                        <div class="sale-actions">
+                            <button class="sale-action-btn print" onclick="printSale(${sale.id})" title="Imprimir este pedido">
+                                <i class="fas fa-print"></i> Imprimir
+                            </button>
+                            <button class="sale-action-btn delete" onclick="confirmDeleteSale(${sale.id})" title="Excluir este pedido">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            reportHTML += `
+                    <div style="display: flex; justify-content: space-between; margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--warning); font-size: 1.2em; font-weight: bold;">
+                        <div>TOTAL DO DIA:</div>
+                        <div style="color: var(--success);">R$ ${totalDay.toFixed(2)}</div>
+                    </div>
+                    <div style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; font-size: 0.9em; color: #666;">
+                        Relatório gerado em: ${new Date().toLocaleString('pt-BR')}
+                    </div>
+                </div>
+            `;
+            
+            // Preparar dados para criptografia
+            const reportData = {
+                loja: "Mundo Carol",
+                data: selectedDate,
+                vendedor: vendedorName || "Não informado",
+                totalVendas: selectedSales.length,
+                totalDia: totalDay,
+                vendas: selectedSales.map(sale => ({
+                    hora: new Date(sale.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                    total: sale.total,
+                    produtos: sale.products
+                }))
+            };
+            
+            currentReportData = reportData;
+            
+            // Gerar texto criptografado
+            encryptedText = encryptData(reportData);
+            
+            if (encryptedText) {
+                // Mostrar área de texto criptografado
+                document.getElementById('encryptedText').textContent = encryptedText;
+                document.getElementById('encryptedTextArea').style.display = 'block';
+            }
+            
+            document.getElementById('reportContent').innerHTML = reportHTML;
+            showNotification('Relatório gerado com sucesso!', 'success');
+        }
+        
+        // Imprimir uma venda específica
+        function printSale(saleId) {
+            const sale = salesHistory.find(s => s.id === saleId);
+            
+            if (!sale) {
+                showNotification('Venda não encontrada!', 'error');
+                return;
+            }
+            
+            const now = new Date(sale.timestamp);
+            const dateStr = now.toLocaleDateString('pt-BR');
+            const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            
+            let receiptHTML = `
+                <div class="header">
+                    <div><strong>MUNDO CAROL</strong></div>
+                    <div>Praça Santuário São Geraldo 46</div>
+                    <div>Bairro São Geraldo BH/MG</div>
+                    <div>CNPJ: 10.648.303/0001-79</div>
+                    <div>${dateStr} ${timeStr}</div>
+                    <div><strong>*** REIMPRESSÃO ***</strong></div>
+                </div>
+                <div style="border-bottom: 1px dashed #000; margin: 5px 0;"></div>
+            `;
+            
+            // Agrupar produtos
+            const groupedProducts = {};
+            sale.products.forEach(product => {
+                const key = `${product.name}_${product.price}`;
+                if (!groupedProducts[key]) {
+                    groupedProducts[key] = {
+                        name: product.name,
+                        price: product.price,
+                        quantity: product.quantity,
+                        total: product.total
+                    };
+                } else {
+                    groupedProducts[key].quantity += product.quantity;
+                    groupedProducts[key].total += product.total;
+                }
+            });
+            
+            Object.values(groupedProducts).forEach(product => {
+                const productName = product.name.length > 20 ? product.name.substring(0, 20) + "..." : product.name;
+                receiptHTML += `
+                    <div class="line">
+                        <div>${product.quantity}x ${productName}</div>
+                        <div>R$ ${product.total.toFixed(2)}</div>
+                    </div>
+                `;
+            });
+            
+            receiptHTML += `
+                <div style="border-top: 1px dashed #000; margin: 5px 0;"></div>
+                <div class="line total-line">
+                    <div><strong>TOTAL</strong></div>
+                    <div><strong>R$ ${sale.total.toFixed(2)}</strong></div>
+                </div>
+                <div class="footer">
+                    <div><strong>Obrigado pela preferência!</strong></div>
+                    <div>Volte sempre à Mundo Carol</div>
+                </div>
+            `;
+            
+            // Criar uma nova janela para impressão
+            const printWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Cupom Fiscal - Mundo Carol (Reimpressão)</title>
+                    <style>
+                        body {
+                            font-family: 'Courier New', monospace;
+                            font-size: 14px;
+                            line-height: 1.2;
+                            margin: 20px;
+                            padding: 0;
+                        }
+                        .header {
+                            text-align: center;
+                            margin-bottom: 10px;
+                            border-bottom: 1px dashed #000;
+                            padding-bottom: 10px;
+                        }
+                        .line {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-bottom: 5px;
+                            white-space: nowrap;
+                        }
+                        .total-line {
+                            border-top: 1px dashed #000;
+                            margin-top: 10px;
+                            padding-top: 10px;
+                            font-weight: bold;
+                        }
+                        .footer {
+                            text-align: center;
+                            margin-top: 20px;
+                            border-top: 1px dashed #000;
+                            padding-top: 10px;
+                        }
+                        @media print {
+                            body {
+                                font-size: 12px;
+                                margin: 5px;
+                            }
+                            .print-btn {
+                                display: none;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${receiptHTML}
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button class="print-btn" onclick="window.print()" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            <i class="fas fa-print"></i> Imprimir
+                        </button>
+                        <button class="print-btn" onclick="window.close()" style="padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                            <i class="fas fa-times"></i> Fechar
+                        </button>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            
+            showNotification(`Preparando impressão da venda...`, 'success');
+        }
+        
+        // Confirmar exclusão de uma venda
+        function confirmDeleteSale(saleId) {
+            const sale = salesHistory.find(s => s.id === saleId);
+            
+            if (!sale) {
+                showNotification('Venda não encontrada!', 'error');
+                return;
+            }
+            
+            saleToDelete = sale;
+            
+            const saleTime = sale.timestamp ? new Date(sale.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+            
+            let saleDetailsHTML = `
+                <p><strong>Data/Hora:</strong> ${saleTime}</p>
+                <p><strong>Total:</strong> R$ ${sale.total.toFixed(2)}</p>
+                <p><strong>Itens:</strong> ${sale.products.length}</p>
+                <p><strong>Produtos:</strong></p>
+                <ul style="margin-left: 20px; font-size: 0.9em;">
+            `;
+            
+            // Agrupar produtos para exibição
+            const groupedProducts = {};
+            sale.products.forEach(product => {
+                const key = `${product.name}_${product.price}`;
+                if (!groupedProducts[key]) {
+                    groupedProducts[key] = {
+                        name: product.name,
+                        price: product.price,
+                        quantity: product.quantity
+                    };
+                } else {
+                    groupedProducts[key].quantity += product.quantity;
+                }
+            });
+            
+            Object.values(groupedProducts).forEach(product => {
+                saleDetailsHTML += `<li>${product.quantity}x ${product.name} - R$ ${product.price.toFixed(2)}</li>`;
+            });
+            
+            saleDetailsHTML += `</ul>`;
+            
+            document.getElementById('saleToDeleteDetails').innerHTML = saleDetailsHTML;
+            document.getElementById('confirmDeleteModal').style.display = 'flex';
+        }
+        
+        // Fechar modal de confirmação de exclusão
+        function closeConfirmDeleteModal() {
+            document.getElementById('confirmDeleteModal').style.display = 'none';
+            saleToDelete = null;
+        }
+        
+        // Excluir venda confirmada
+        function deleteConfirmedSale() {
+            if (!saleToDelete) {
+                showNotification('Nenhuma venda selecionada para exclusão!', 'error');
+                return;
+            }
+            
+            // Encontrar índice da venda
+            const saleIndex = salesHistory.findIndex(s => s.id === saleToDelete.id);
+            
+            if (saleIndex !== -1) {
+                // Remover venda do histórico
+                const deletedSale = salesHistory.splice(saleIndex, 1)[0];
+                
+                // Salvar histórico atualizado
+                saveSalesToStorage();
+                
+                // Atualizar relatório
+                const selectedDate = document.getElementById('reportDate').value;
+                if (selectedDate === deletedSale.date) {
+                    generateReport();
+                }
+                
+                showNotification('Venda excluída com sucesso!', 'success');
+            } else {
+                showNotification('Venda não encontrada no histórico!', 'error');
+            }
+            
+            closeConfirmDeleteModal();
+        }
+        
+        // Enviar texto criptografado para WhatsApp
+        function sendEncryptedToWhatsApp() {
+            const selectedDate = document.getElementById('reportDate').value;
+            const vendedorName = document.getElementById('vendedorName').value.trim();
+            
+            if (!selectedDate) {
+                showNotification('Por favor, selecione uma data.', 'error');
+                return;
+            }
+            
+            const selectedSales = salesHistory.filter(sale => sale.date === selectedDate);
+            
+            if (selectedSales.length === 0) {
+                showNotification('Nenhuma venda encontrada para esta data.', 'error');
+                return;
+            }
+            
+            // Calcular total do dia
+            const totalDay = selectedSales.reduce((sum, sale) => sum + sale.total, 0);
+            
+            // Preparar dados para criptografia
+            const reportData = {
+                loja: "Mundo Carol",
+                data: selectedDate,
+                vendedor: vendedorName || "Não informado",
+                totalVendas: selectedSales.length,
+                totalDia: totalDay,
+                vendas: selectedSales.map(sale => ({
+                    hora: new Date(sale.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                    total: sale.total,
+                    produtos: sale.products
+                }))
+            };
+            
+            // Criptografar dados
+            encryptedText = encryptData(reportData);
+            
+            if (!encryptedText) {
+                showNotification('Erro ao criptografar dados.', 'error');
+                return;
+            }
+            
+            // Mostrar texto criptografado
+            document.getElementById('encryptedText').textContent = encryptedText;
+            document.getElementById('encryptedTextArea').style.display = 'block';
+            
+            // Criar mensagem para WhatsApp (sem detalhes do relatório)
+            const message = `📊 RELATÓRIO MUNDO CAROL
+
+Data: ${selectedDate}
+Vendedor: ${vendedorName || "Não informado"}
+
+Dados criptografados:
+${encryptedText}
+
+_Use o decodificador para visualizar este relatório._`;
+            
+            // Codificar mensagem para URL
+            const encodedMessage = encodeURIComponent(message);
+            const phoneNumber = "31988378225";
+            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            // Abrir WhatsApp
+            window.open(whatsappURL, '_blank');
+            
+            showNotification('Texto criptografado gerado! WhatsApp aberto para envio.', 'success');
+        }
+        
+        // Copiar texto criptografado
+        function copyEncryptedText() {
+            if (!encryptedText) {
+                showNotification('Nenhum texto criptografado disponível.', 'error');
+                return;
+            }
+            
+            navigator.clipboard.writeText(encryptedText)
+                .then(() => {
+                    showNotification('Texto criptografado copiado para a área de transferência!', 'success');
+                })
+                .catch(err => {
+                    console.error('Erro ao copiar texto:', err);
+                    showNotification('Erro ao copiar texto.', 'error');
+                });
+        }
+        
+        // Abrir WhatsApp com texto
+        function openWhatsAppWithText() {
+            if (!encryptedText) {
+                showNotification('Nenhum texto criptografado disponível.', 'error');
+                return;
+            }
+            
+            const selectedDate = document.getElementById('reportDate').value;
+            const vendedorName = document.getElementById('vendedorName').value.trim();
+            
+            const message = `📊 RELATÓRIO MUNDO CAROL
+
+Data: ${selectedDate}
+Vendedor: ${vendedorName || "Não informado"}
+
+Dados criptografados:
+${encryptedText}
+
+_Use o decodificador para visualizar este relatório._`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            const phoneNumber = "31988378225";
+            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            window.open(whatsappURL, '_blank');
+        }
+        
+        // Limpar dados
+        function showClearPasswordModal() {
+            document.getElementById('clearPasswordModal').style.display = 'flex';
+            document.getElementById('clearPassword').focus();
+            document.getElementById('clearPasswordError').style.display = 'none';
+        }
+        
+        function closeClearPasswordModal() {
+            document.getElementById('clearPasswordModal').style.display = 'none';
+            document.getElementById('clearPassword').value = '';
+        }
+        
+        function checkClearPasswordEnter(event) {
+            if (event.key === 'Enter') {
+                verifyClearPassword();
+            }
+        }
+        
+        function verifyClearPassword() {
+            const password = document.getElementById('clearPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                clearLocalStorage();
+                closeClearPasswordModal();
+            } else {
+                document.getElementById('clearPasswordError').style.display = 'block';
+                document.getElementById('clearPassword').value = '';
+                document.getElementById('clearPassword').focus();
+            }
+        }
+        
+        function clearLocalStorage() {
+            if (!confirm('Tem certeza que deseja limpar TODOS os dados de vendas?')) {
+                return;
+            }
+            
+            localStorage.removeItem('salesHistory');
+            localStorage.removeItem('currentSale');
+            salesHistory = [];
+            currentSale = [];
+            updateSalesTable();
+            document.getElementById('reportContent').innerHTML = '';
+            document.getElementById('encryptedTextArea').style.display = 'none';
+            showNotification('Todos os dados foram removidos.', 'success');
+        }
+        
+        // Funções auxiliares
+        function showNotification(message, type) {
+            const notificationArea = document.getElementById('notificationArea');
+            
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <span>${message}</span>
+                <button class="close-alert" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            
+            notificationArea.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 4000);
+        }
+        
+        // Funções para reimpressão da última venda
+        function reprintLastSale() {
+            if (salesHistory.length === 0) {
+                showNotification('Nenhuma venda encontrada.', 'error');
+                return;
+            }
+            
+            const sortedSales = [...salesHistory].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            const lastSale = sortedSales[0];
+            
+            printSale(lastSale.id);
+        }
+    </script>
+</body>
+</html>
