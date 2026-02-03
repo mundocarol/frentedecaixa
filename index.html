@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -529,6 +528,7 @@
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            display: none; /* Oculto por padrão */
         }
 
         .report-section h2 {
@@ -586,29 +586,115 @@
         .header-info {
             font-size: 0.9rem;
             opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        /* Modal de senha */
-        .password-modal {
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vendedor-input-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .vendedor-input {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            width: 150px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .vendedor-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .vendedor-input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .toggle-btn {
+            padding: 5px 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .toggle-btn.active {
+            background-color: var(--success);
+        }
+
+        .toggle-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn.active .toggle-indicator {
+            background-color: #fff;
+        }
+
+        /* Modal de bloqueio - quando vendedor não está definido */
+        .lock-modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
         }
 
-        .password-content {
+        .lock-content {
             background-color: white;
-            padding: 25px;
-            border-radius: 8px;
+            padding: 30px;
+            border-radius: 10px;
             max-width: 500px;
             width: 90%;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .lock-content i {
+            font-size: 4rem;
+            color: var(--warning);
+            margin-bottom: 20px;
+        }
+
+        .lock-content h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .lock-content p {
+            margin-bottom: 20px;
+            color: var(--dark);
         }
 
         /* Área de texto criptografado */
@@ -692,6 +778,15 @@
             
             .filter-row {
                 flex-direction: column;
+            }
+
+            .header-controls {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .vendedor-input {
+                width: 100%;
             }
         }
 
@@ -918,13 +1013,74 @@
         .sale-details p {
             margin-bottom: 5px;
         }
+
+        /* Estilo para tabela de edição de produtos rápidos */
+        .products-edit-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .products-edit-table th, .products-edit-table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .products-edit-table th {
+            background-color: #f1f3f5;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
     </style>
 </head>
 <body>
+    <!-- Modal de bloqueio quando não há vendedor -->
+    <div class="lock-modal" id="lockModal">
+        <div class="lock-content">
+            <i class="fas fa-user-lock"></i>
+            <h2>Vendedor Não Identificado</h2>
+            <p>Para começar a usar o sistema, digite seu nome no campo "Vendedor" no cabeçalho da página.</p>
+            <p>O sistema ficará bloqueado até que um vendedor seja identificado.</p>
+            <button class="btn btn-primary" onclick="focusVendedorInput()">
+                <i class="fas fa-arrow-up"></i> Ir para campo Vendedor
+            </button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="compact-header">
             <h1><i class="fas fa-cash-register"></i> Frente de Caixa - Mundo Carol</h1>
             <div class="header-info">
+                <div class="header-controls">
+                    <button class="btn btn-secondary" onclick="reprintLastSale()" title="Reimprimir último pedido">
+                        <i class="fas fa-redo"></i> Reimprimir Último
+                    </button>
+                    <button class="toggle-btn" id="toggleReportBtn" onclick="toggleReportSection()">
+                        <span class="toggle-indicator"></span> Relatório
+                    </button>
+                    <div class="vendedor-input-container">
+                        <input type="text" id="vendedorName" class="vendedor-input" placeholder="Nome do vendedor" 
+                               onchange="updateVendedor()" onkeypress="handleVendedorKeyPress(event)">
+                        <button class="btn btn-success btn-sm" onclick="updateVendedor()" title="Confirmar vendedor">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                </div>
                 <span id="currentDateTime"></span>
             </div>
         </div>
@@ -1015,17 +1171,13 @@
             </div>
         </div>
         
-        <div class="report-section">
+        <div class="report-section" id="reportSection">
             <h2><i class="fas fa-chart-bar"></i> Relatório do Dia</h2>
             
             <div class="filter-row">
                 <div class="form-group" style="flex: 2;">
                     <label for="reportDate">Data do Relatório</label>
                     <input type="date" id="reportDate" class="form-control" value="">
-                </div>
-                <div class="form-group" style="flex: 2;">
-                    <label for="vendedorName">Nome do Vendedor</label>
-                    <input type="text" id="vendedorName" class="form-control" placeholder="Digite seu nome">
                 </div>
             </div>
             
@@ -1035,9 +1187,6 @@
                 </button>
                 <button class="btn btn-whatsapp" onclick="sendEncryptedToWhatsApp()">
                     <i class="fab fa-whatsapp"></i> Enviar ZAP Criptografado
-                </button>
-                <button class="btn btn-secondary" onclick="reprintLastSale()">
-                    <i class="fas fa-redo"></i> Reimprimir Último
                 </button>
                 <button class="btn btn-warning" onclick="showClearPasswordModal()">
                     <i class="fas fa-trash-alt"></i> Limpar Dados
@@ -1143,25 +1292,7 @@
         </div>
     </div>
 
-    <!-- Modal de senha para limpar dados -->
-    <div class="password-modal" id="clearPasswordModal">
-        <div class="password-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Confirmar Limpeza de Dados</h3>
-                <button class="close-modal" onclick="closeClearPasswordModal()">&times;</button>
-            </div>
-            <p>Digite a senha de administrador para limpar todos os dados:</p>
-            <div class="form-group">
-                <input type="password" id="clearPassword" class="form-control" placeholder="Senha" onkeypress="checkClearPasswordEnter(event)">
-            </div>
-            <div class="actions">
-                <button class="btn btn-warning" onclick="closeClearPasswordModal()">Cancelar</button>
-                <button class="btn btn-danger" onclick="verifyClearPassword()">Limpar Dados</button>
-            </div>
-            <p id="clearPasswordError" style="color: #e74c3c; margin-top: 10px; display: none;">Senha incorreta!</p>
-        </div>
-    </div>
-
+   
     <!-- Modal de confirmação para excluir pedido -->
     <div class="modal confirm-delete-modal" id="confirmDeleteModal">
         <div class="modal-content">
@@ -1195,6 +1326,8 @@
         let currentReportData = null;
         let encryptedText = "";
         let saleToDelete = null;
+        let currentVendedor = "";
+        let isSystemLocked = true; // Sistema bloqueado até que o vendedor seja definido
         
         // Variáveis para clique múltiplo em produtos rápidos
         let quickClickCounter = 0;
@@ -1218,6 +1351,9 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('reportDate').value = today;
             
+            // Verificar se há vendedor salvo
+            checkSavedVendedor();
+            
             // Carregar histórico de vendas
             loadSalesHistory();
             
@@ -1232,11 +1368,19 @@
             
             // Configurar tecla Enter para adicionar produto
             document.addEventListener('keydown', function(event) {
+                // Verificar se o sistema está bloqueado
+                if (isSystemLocked) {
+                    showNotification('Digite o nome do vendedor para começar!', 'error');
+                    document.getElementById('vendedorName').focus();
+                    return;
+                }
+                
                 // Enter para adicionar produto
                 if (event.key === 'Enter' && 
                     !event.target.matches('#clearPassword') &&
                     !event.target.matches('#newProductName') &&
-                    !event.target.matches('#newProductPrice')) {
+                    !event.target.matches('#newProductPrice') &&
+                    !event.target.matches('#vendedorName')) {
                     
                     // Verificar se está editando um preço na tabela
                     const activePriceEdit = document.querySelector('.price-edit-input:focus');
@@ -1277,6 +1421,99 @@
             const dateStr = now.toLocaleDateString('pt-BR');
             const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
             document.getElementById('currentDateTime').textContent = `${dateStr} - ${timeStr}`;
+        }
+        
+        // Verificar se há vendedor salvo
+        function checkSavedVendedor() {
+            const savedVendedor = localStorage.getItem('currentVendedor');
+            if (savedVendedor && savedVendedor.trim() !== '') {
+                currentVendedor = savedVendedor;
+                document.getElementById('vendedorName').value = currentVendedor;
+                unlockSystem();
+            } else {
+                lockSystem();
+            }
+        }
+        
+        // Bloquear o sistema (quando não há vendedor)
+        function lockSystem() {
+            isSystemLocked = true;
+            document.getElementById('lockModal').style.display = 'flex';
+            
+            // Desabilitar todos os botões e campos (exceto o campo vendedor)
+            document.querySelectorAll('button:not(#lockModal button), input:not(#vendedorName)').forEach(element => {
+                element.style.pointerEvents = 'none';
+                element.style.opacity = '0.5';
+            });
+        }
+        
+        // Desbloquear o sistema (quando há vendedor)
+        function unlockSystem() {
+            isSystemLocked = false;
+            document.getElementById('lockModal').style.display = 'none';
+            
+            // Habilitar todos os botões e campos
+            document.querySelectorAll('button:not(#lockModal button), input:not(#vendedorName)').forEach(element => {
+                element.style.pointerEvents = 'auto';
+                element.style.opacity = '1';
+            });
+            
+            showNotification(`Sistema liberado para ${currentVendedor}!`, 'success');
+        }
+        
+        // Atualizar vendedor
+        function updateVendedor() {
+            const vendedorInput = document.getElementById('vendedorName');
+            const vendedorName = vendedorInput.value.trim();
+            
+            if (vendedorName === '') {
+                showNotification('Por favor, digite o nome do vendedor.', 'error');
+                vendedorInput.focus();
+                return;
+            }
+            
+            currentVendedor = vendedorName;
+            localStorage.setItem('currentVendedor', currentVendedor);
+            unlockSystem();
+            
+            showNotification(`Vendedor definido: ${currentVendedor}`, 'success');
+        }
+        
+        // Manipular tecla Enter no campo vendedor
+        function handleVendedorKeyPress(event) {
+            if (event.key === 'Enter') {
+                updateVendedor();
+            }
+        }
+        
+        // Focar no campo vendedor (usado no modal de bloqueio)
+        function focusVendedorInput() {
+            document.getElementById('vendedorName').focus();
+            document.getElementById('lockModal').style.display = 'none';
+        }
+        
+        // Verificar se o sistema está bloqueado antes de executar ações
+        function checkSystemLock() {
+            if (isSystemLocked) {
+                showNotification('Digite o nome do vendedor para começar!', 'error');
+                document.getElementById('vendedorName').focus();
+                return true;
+            }
+            return false;
+        }
+        
+        // Alternar visibilidade da seção de relatório
+        function toggleReportSection() {
+            const reportSection = document.getElementById('reportSection');
+            const toggleBtn = document.getElementById('toggleReportBtn');
+            
+            if (reportSection.style.display === 'none' || reportSection.style.display === '') {
+                reportSection.style.display = 'block';
+                toggleBtn.classList.add('active');
+            } else {
+                reportSection.style.display = 'none';
+                toggleBtn.classList.remove('active');
+            }
         }
         
         // Carregar produtos rápidos do localStorage
@@ -1392,7 +1629,10 @@
                     <div class="product-name">${product.name}</div>
                     <div class="product-price">R$ ${product.price.toFixed(2)}</div>
                 `;
-                button.onclick = () => handleQuickProductClick(product);
+                button.onclick = () => {
+                    if (checkSystemLock()) return;
+                    handleQuickProductClick(product);
+                };
                 
                 container.appendChild(button);
                 quickProductsContainer.appendChild(container);
@@ -1531,6 +1771,8 @@
         
         // Adicionar produto à venda (com agrupamento)
         function addProduct() {
+            if (checkSystemLock()) return;
+            
             const name = document.getElementById('productName').value.trim();
             const price = parseFloat(document.getElementById('productPrice').value);
             const quantity = parseInt(document.getElementById('productQuantity').value);
@@ -1688,6 +1930,8 @@
         
         // Habilitar edição de preço
         function enablePriceEdit(name, price, id) {
+            if (checkSystemLock()) return;
+            
             // Desabilitar todas as outras edições
             const allRows = document.querySelectorAll('#salesTableBody tr');
             allRows.forEach(row => {
@@ -1798,6 +2042,8 @@
         
         // Aumentar quantidade de um produto
         function increaseQuantity(name, price, id) {
+            if (checkSystemLock()) return;
+            
             const existingProductIndex = currentSale.findIndex(p => p.name === name && p.price === price && p.id === id);
             if (existingProductIndex !== -1) {
                 currentSale[existingProductIndex].quantity += 1;
@@ -1809,6 +2055,8 @@
         
         // Diminuir quantidade de um produto
         function decreaseQuantity(name, price, id) {
+            if (checkSystemLock()) return;
+            
             const existingProductIndex = currentSale.findIndex(p => p.name === name && p.price === price && p.id === id);
             if (existingProductIndex !== -1) {
                 if (currentSale[existingProductIndex].quantity > 1) {
@@ -1824,6 +2072,8 @@
         
         // Remover grupo de produtos
         function removeProductGroup(name, price, id) {
+            if (checkSystemLock()) return;
+            
             currentSale = currentSale.filter(product => !(product.name === name && product.price === price && product.id === id));
             updateSalesTable();
             saveCurrentSale();
@@ -1842,6 +2092,8 @@
         
         // Funções para produtos rápidos
         function showQuickProductsModal() {
+            if (checkSystemLock()) return;
+            
             loadEditQuickProductsTable();
             document.getElementById('quickProductsModal').style.display = 'flex';
             document.getElementById('newProductName').focus();
@@ -1854,6 +2106,8 @@
         }
         
         function editQuickProducts() {
+            if (checkSystemLock()) return;
+            
             showQuickProductsModal();
         }
         
@@ -1887,6 +2141,8 @@
         }
         
         function addNewQuickProduct() {
+            if (checkSystemLock()) return;
+            
             const name = document.getElementById('newProductName').value.trim();
             const price = parseFloat(document.getElementById('newProductPrice').value);
             
@@ -1921,6 +2177,8 @@
         }
         
         function deleteQuickProduct(productId) {
+            if (checkSystemLock()) return;
+            
             if (!confirm('Tem certeza que deseja remover este produto rápido?')) {
                 return;
             }
@@ -1933,6 +2191,8 @@
         }
         
         function saveQuickProducts() {
+            if (checkSystemLock()) return;
+            
             const nameInputs = document.querySelectorAll('.edit-product-name');
             const priceInputs = document.querySelectorAll('.edit-product-price');
             
@@ -1966,6 +2226,8 @@
         
         // Finalizar venda
         function finishSale() {
+            if (checkSystemLock()) return;
+            
             if (currentSale.length === 0) {
                 showNotification('Adicione produtos à venda antes de finalizar.', 'error');
                 return;
@@ -1995,6 +2257,7 @@
                     <div>Bairro São Geraldo BH/MG</div>
                     <div>CNPJ: 10.648.303/0001-79</div>
                     <div>${dateStr} ${timeStr}</div>
+                    <div><strong>Vendedor:</strong> ${currentVendedor}</div>
                 </div>
                 <div style="border-bottom: 1px dashed #000; margin: 5px 0;"></div>
             `;
@@ -2043,6 +2306,8 @@
         
         // Confirmar venda e imprimir
         function confirmSaleAndPrint() {
+            if (checkSystemLock()) return;
+            
             const total = currentSale.reduce((sum, product) => sum + product.total, 0);
             const now = new Date();
             
@@ -2051,7 +2316,8 @@
                 date: now.toISOString().split('T')[0],
                 timestamp: now.toISOString(),
                 products: [...currentSale],
-                total: total
+                total: total,
+                vendedor: currentVendedor
             };
             
             salesHistory.push(sale);
@@ -2144,6 +2410,8 @@
         
         // Limpar venda
         function clearSale() {
+            if (checkSystemLock()) return;
+            
             if (currentSale.length > 0 && !confirm('Tem certeza que deseja cancelar esta venda?')) {
                 return;
             }
@@ -2169,8 +2437,9 @@
         
         // Gerar relatório (com senha)
         function generateReport() {
+            if (checkSystemLock()) return;
+            
             const selectedDate = document.getElementById('reportDate').value;
-            const vendedorName = document.getElementById('vendedorName').value.trim();
             
             if (!selectedDate) {
                 showNotification('Por favor, selecione uma data.', 'error');
@@ -2201,7 +2470,7 @@
             let totalDay = 0;
             let reportHTML = `
                 <div class="filter-row">
-                    <div class="form-group">
+                    <div class="form-group" style="flex: 2;">
                         <label>Data do Relatório</label>
                         <input type="date" class="form-control" value="${selectedDate}" onchange="document.getElementById('reportDate').value = this.value; generateReport()">
                     </div>
@@ -2211,7 +2480,7 @@
                         <h3 style="color: var(--primary); margin: 0;">RELATÓRIO MUNDO CAROL</h3>
                         <div style="margin-top: 5px;">
                             <strong>Data:</strong> ${selectedDate} | 
-                            <strong>Vendedor:</strong> ${vendedorName || "Não informado"} | 
+                            <strong>Vendedor:</strong> ${currentVendedor || "Não informado"} | 
                             <strong>Total de Vendas:</strong> ${selectedSales.length}
                         </div>
                     </div>
@@ -2289,7 +2558,7 @@
             const reportData = {
                 loja: "Mundo Carol",
                 data: selectedDate,
-                vendedor: vendedorName || "Não informado",
+                vendedor: currentVendedor || "Não informado",
                 totalVendas: selectedSales.length,
                 totalDia: totalDay,
                 vendas: selectedSales.map(sale => ({
@@ -2316,6 +2585,8 @@
         
         // Imprimir uma venda específica
         function printSale(saleId) {
+            if (checkSystemLock()) return;
+            
             const sale = salesHistory.find(s => s.id === saleId);
             
             if (!sale) {
@@ -2334,6 +2605,7 @@
                     <div>Bairro São Geraldo BH/MG</div>
                     <div>CNPJ: 10.648.303/0001-79</div>
                     <div>${dateStr} ${timeStr}</div>
+                    <div><strong>Vendedor:</strong> ${sale.vendedor || currentVendedor}</div>
                     <div><strong>*** REIMPRESSÃO ***</strong></div>
                 </div>
                 <div style="border-bottom: 1px dashed #000; margin: 5px 0;"></div>
@@ -2448,8 +2720,25 @@
             showNotification(`Preparando impressão da venda...`, 'success');
         }
         
+        // Reimprimir última venda
+        function reprintLastSale() {
+            if (checkSystemLock()) return;
+            
+            if (salesHistory.length === 0) {
+                showNotification('Nenhuma venda encontrada.', 'error');
+                return;
+            }
+            
+            const sortedSales = [...salesHistory].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            const lastSale = sortedSales[0];
+            
+            printSale(lastSale.id);
+        }
+        
         // Confirmar exclusão de uma venda
         function confirmDeleteSale(saleId) {
+            if (checkSystemLock()) return;
+            
             const sale = salesHistory.find(s => s.id === saleId);
             
             if (!sale) {
@@ -2533,8 +2822,9 @@
         
         // Enviar texto criptografado para WhatsApp
         function sendEncryptedToWhatsApp() {
+            if (checkSystemLock()) return;
+            
             const selectedDate = document.getElementById('reportDate').value;
-            const vendedorName = document.getElementById('vendedorName').value.trim();
             
             if (!selectedDate) {
                 showNotification('Por favor, selecione uma data.', 'error');
@@ -2555,7 +2845,7 @@
             const reportData = {
                 loja: "Mundo Carol",
                 data: selectedDate,
-                vendedor: vendedorName || "Não informado",
+                vendedor: currentVendedor || "Não informado",
                 totalVendas: selectedSales.length,
                 totalDia: totalDay,
                 vendas: selectedSales.map(sale => ({
@@ -2581,7 +2871,7 @@
             const message = `📊 RELATÓRIO MUNDO CAROL
 
 Data: ${selectedDate}
-Vendedor: ${vendedorName || "Não informado"}
+Vendedor: ${currentVendedor || "Não informado"}
 
 Dados criptografados:
 ${encryptedText}
@@ -2624,12 +2914,11 @@ _Use o decodificador para visualizar este relatório._`;
             }
             
             const selectedDate = document.getElementById('reportDate').value;
-            const vendedorName = document.getElementById('vendedorName').value.trim();
             
             const message = `📊 RELATÓRIO MUNDO CAROL
 
 Data: ${selectedDate}
-Vendedor: ${vendedorName || "Não informado"}
+Vendedor: ${currentVendedor || "Não informado"}
 
 Dados criptografados:
 ${encryptedText}
@@ -2645,6 +2934,8 @@ _Use o decodificador para visualizar este relatório._`;
         
         // Limpar dados
         function showClearPasswordModal() {
+            if (checkSystemLock()) return;
+            
             document.getElementById('clearPasswordModal').style.display = 'flex';
             document.getElementById('clearPassword').focus();
             document.getElementById('clearPasswordError').style.display = 'none';
@@ -2707,19 +2998,6 @@ _Use o decodificador para visualizar este relatório._`;
                     notification.remove();
                 }
             }, 4000);
-        }
-        
-        // Funções para reimpressão da última venda
-        function reprintLastSale() {
-            if (salesHistory.length === 0) {
-                showNotification('Nenhuma venda encontrada.', 'error');
-                return;
-            }
-            
-            const sortedSales = [...salesHistory].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            const lastSale = sortedSales[0];
-            
-            printSale(lastSale.id);
         }
     </script>
 </body>
