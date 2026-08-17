@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Relatório Cestas - Site × Vendedor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f0f2f5;
+            padding: 16px;
+            color: #1a1a2e;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 18px 24px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header h1 small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #a8b2d1;
+        }
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .filtros button, .filtros input, .filtros select {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            background: #2d2d44;
+            color: #c8d0e0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .filtros button:hover {
+            background: #3d3d5c;
+        }
+        .filtros button.active {
+            background: #4f46e5;
+            color: #fff;
+        }
+        .filtros input[type="date"] {
+            background: #2d2d44;
+            color: #c8d0e0;
+            cursor: pointer;
+        }
+        .filtros input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        .filtros select {
+            background: #2d2d44;
+            color: #c8d0e0;
+            cursor: pointer;
+        }
+
+        .periodo-info {
+            background: #fff;
+            padding: 10px 18px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 14px;
+            color: #4a4a6a;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .periodo-info strong {
+            color: #1a1a2e;
+        }
+
+        .totais-gerais {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .total-card {
+            background: #fff;
+            padding: 12px 14px;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            text-align: center;
+            border-left: 4px solid #4f46e5;
+        }
+        .total-card .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #8888aa;
+            letter-spacing: 0.3px;
+        }
+        .total-card .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-top: 2px;
+        }
+        .total-card .value.green { color: #10b981; }
+        .total-card .value.orange { color: #f59e0b; }
+        .total-card .value.purple { color: #8b5cf6; }
+        .total-card .value.blue { color: #3b82f6; }
+        .total-card .value.red { color: #ef4444; }
+        .total-card .value.teal { color: #14b8a6; }
+
+        .tabela-wrapper {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        thead {
+            background: #f8f9fc;
+            border-bottom: 2px solid #e9edf4;
+        }
+        th {
+            text-align: left;
+            padding: 12px 14px;
+            font-weight: 600;
+            color: #4a4a6a;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #f0f2f8;
+            color: #2d2d44;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .col-data { min-width: 90px; }
+        .col-origem { min-width: 80px; }
+        .col-num { text-align: right; }
+        .col-valor { text-align: right; font-weight: 600; }
+        .col-frete { text-align: right; color: #f59e0b; }
+        .col-total { text-align: right; font-weight: 700; color: #1a1a2e; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-site { background: #dbeafe; color: #1d4ed8; }
+        .badge-vendedor { background: #ede9fe; color: #5b21b6; }
+
+        .linha-total {
+            background: #f8f9fc;
+            font-weight: 700;
+        }
+        .linha-total td {
+            border-top: 2px solid #d1d5db;
+            padding-top: 12px;
+        }
+
+        .sem-dados {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        .info-oculto {
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            color: #94a3b8;
+            background: #f8f9fc;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .header { flex-direction: column; align-items: stretch; }
+            .filtros { flex-wrap: wrap; }
+            .filtros button, .filtros input, .filtros select { flex: 1; min-width: 60px; font-size: 12px; padding: 6px 10px; }
+            .totais-gerais { grid-template-columns: repeat(2, 1fr); }
+            .total-card .value { font-size: 17px; }
+            table { font-size: 12px; }
+            th, td { padding: 8px 10px; }
+        }
+        @media (max-width: 480px) {
+            .totais-gerais { grid-template-columns: 1fr 1fr; }
+            .col-data { min-width: 75px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>🧺 Cestas <small>Site · Vendedor</small></h1>
+        <div class="filtros">
+            <button class="active" data-periodo="hoje">Hoje</button>
+            <button data-periodo="ontem">Ontem</button>
+            <button data-periodo="7d">7 dias</button>
+            <button data-periodo="30d">30 dias</button>
+            <button data-periodo="tudo">Tudo</button>
+            <input type="date" id="dataPicker" />
+            <select id="mesSelect">
+                <option value="">Mês</option>
+                <option value="0">Jan</option><option value="1">Fev</option><option value="2">Mar</option>
+                <option value="3">Abr</option><option value="4">Mai</option><option value="5">Jun</option>
+                <option value="6">Jul</option><option value="7">Ago</option><option value="8">Set</option>
+                <option value="9">Out</option><option value="10">Nov</option><option value="11">Dez</option>
+            </select>
+            <select id="anoSelect">
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="periodo-info" id="periodoInfo">
+        <span><strong>📅 Hoje</strong> — <span id="qtdTotal">0</span> vendas</span>
+        <span>💰 <strong id="totalGeralLabel">R$ 0,00</strong></span>
+    </div>
+
+    <div class="totais-gerais" id="totaisGerais">
+        <div class="total-card"><div class="label">Total Geral</div><div class="value" id="cardTotalGeral">R$ 0,00</div></div>
+        <div class="total-card" style="border-left-color:#3b82f6;"><div class="label">🌐 Site</div><div class="value blue" id="cardTotalSite">R$ 0,00</div></div>
+        <div class="total-card" style="border-left-color:#8b5cf6;"><div class="label">💬 Vendedor</div><div class="value purple" id="cardTotalVendedor">R$ 0,00</div></div>
+        <div class="total-card" style="border-left-color:#14b8a6;"><div class="label">📦 Frete Total</div><div class="value teal" id="cardTotalFrete">R$ 0,00</div></div>
+    </div>
+
+    <div class="tabela-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-data">Data</th>
+                    <th class="col-origem">Origem</th>
+                    <th class="col-num">Qtde</th>
+                    <th class="col-valor">Produtos</th>
+                    <th class="col-frete">Frete</th>
+                    <th class="col-total">Total</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaBody">
+                <tr><td colspan="6" class="sem-dados">Carregando dados...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="info-oculto">
+        
+    </div>
+
+</div>
+
+<script>
+    // ============================================================
+    // CONFIGURAÇÕES
+    // ============================================================
+    const SHEET_ID = '1zsIUvR7eHuk3A0rgjnKBv1niPPKTrdF9FW31onlevgA';
+    const API_KEY = 'AIzaSyAtHI0KGE9dWSQIQQtQLS95i3kuLTD0bSM';
+    const RANGE = 'Respostas ao formulário 2!A:BA';
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwfkTKfoTwTzQfL_Hn4ls5tNVkVV5BMti1Y2gNnrde0QEhJfxYD_9q6NBUGzQd7uqB1/exec';
+
+    let dadosCestas = [];
+    let dadosFiltrados = [];
+    let currentFilter = { type: 'hoje' };
+
+    // ============================================================
+    // FUNÇÕES AUXILIARES
+    // ============================================================
+    function parseCurrency(val) {
+        if (!val) return 0;
+        const cleaned = String(val).replace(',', '.').replace(/[^\d.-]/g, '');
+        return Math.round((parseFloat(cleaned) || 0) * 100) / 100;
+    }
+
+    function getDateOnly(d) {
+        if (!d) return null;
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+
+    function isSameDay(d1, d2) {
+        if (!d1 || !d2) return false;
+        return d1.getFullYear() === d2.getFullYear() &&
+               d1.getMonth() === d2.getMonth() &&
+               d1.getDate() === d2.getDate();
+    }
+
+    function isInMonthYear(d, month, year) {
+        return d && d.getFullYear() === parseInt(year) && d.getMonth() === parseInt(month);
+    }
+
+    function formatDateBR(d) {
+        if (!d) return '';
+        return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    }
+
+    // ============================================================
+    // CLASSIFICAÇÃO DE ORIGEM
+    // ============================================================
+    function classificarOrigem(row, isBalcao = false) {
+        if (isBalcao) return 'balcao';
+
+        const vendedor = (row[6] || '').toLowerCase().trim();
+        const pagamento = (row[32] || '').toLowerCase().trim();
+        const cupom = (row[50] || '').toLowerCase().trim();
+
+        // iFood: ocultar
+        if (vendedor.includes('ifood') || pagamento.includes('ifood') || cupom.includes('ifood')) {
+            return 'ifood';
+        }
+
+        // Site
+        if (vendedor.includes('site') || pagamento.includes('site') || 
+            vendedor.includes('loja integrada') || vendedor.includes('lojaintegrada')) {
+            return 'site';
+        }
+
+        // Vendedor (WhatsApp)
+        return 'vendedor';
+    }
+
+    // ============================================================
+    // CARREGAR DADOS
+    // ============================================================
+    async function carregarDados() {
+        const loading = document.getElementById('tabelaBody');
+        loading.innerHTML = '<tr><td colspan="6" class="sem-dados">⏳ Carregando...</td></tr>';
+
+        let todasVendas = [];
+
+        // 1. Buscar dados da planilha Cestas
+        try {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            
+            if (data.values && data.values.length > 1) {
+                for (let i = 1; i < data.values.length; i++) {
+                    const row = data.values[i];
+                    if (!row[0]) continue;
+
+                    let saleDate = null;
+                    const dateStr = String(row[0]).trim();
+                    if (dateStr.includes('/')) {
+                        const parts = dateStr.split('/');
+                        if (parts.length === 3) {
+                            saleDate = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]));
+                        }
+                    } else if (dateStr.includes('-')) {
+                        const parts = dateStr.split('-');
+                        if (parts.length === 3) {
+                            saleDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+                        }
+                    }
+                    if (!saleDate || isNaN(saleDate.getTime())) continue;
+
+                    const valE = parseCurrency(row[4] || 0);
+                    const valF = parseCurrency(row[5] || 0);
+                    const total = valE + valF;
+                    const origem = classificarOrigem(row, false);
+
+                    // OCULTAR iFood e Balcão
+                    if (origem === 'ifood' || origem === 'balcao') continue;
+
+                    todasVendas.push({
+                        date: saleDate,
+                        dateStr: formatDateBR(saleDate),
+                        vendedor: row[6] || '',
+                        valorProduto: valE,
+                        frete: valF,
+                        total: total,
+                        origem: origem,
+                        payment: row[32] || '',
+                        cliente: row[1] || '',
+                        produto: row[3] || '',
+                        isBalcao: false
+                    });
+                }
+            }
+        } catch(e) {
+            console.error('Erro Cestas:', e);
+        }
+
+        // 2. Buscar vendas Balcão via Web App - OCULTAR todas
+        // Não adicionamos nenhuma venda de balcão
+
+        dadosCestas = todasVendas;
+        console.log(`📊 Total de vendas carregadas (apenas Site e Vendedor): ${dadosCestas.length}`);
+        console.log('📊 Distribuição:', {
+            site: dadosCestas.filter(v => v.origem === 'site').length,
+            vendedor: dadosCestas.filter(v => v.origem === 'vendedor').length
+        });
+        aplicarFiltro('hoje');
+    }
+
+    // ============================================================
+    // FILTROS
+    // ============================================================
+    function aplicarFiltro(tipo, data = null, mes = null, ano = null) {
+        currentFilter = { type: tipo, date: data, month: mes, year: ano };
+        let filtradas = [];
+
+        const hoje = getDateOnly(new Date());
+
+        dadosCestas.forEach(v => {
+            const dataVenda = getDateOnly(v.date);
+            if (!dataVenda) return;
+
+            let incluir = false;
+            if (tipo === 'hoje') {
+                incluir = isSameDay(dataVenda, hoje);
+            } else if (tipo === 'ontem') {
+                const ontem = new Date(hoje);
+                ontem.setDate(ontem.getDate() - 1);
+                incluir = isSameDay(dataVenda, ontem);
+            } else if (tipo === '7d') {
+                const limite = new Date(hoje);
+                limite.setDate(limite.getDate() - 6);
+                incluir = dataVenda >= limite && dataVenda <= hoje;
+            } else if (tipo === '30d') {
+                const limite = new Date(hoje);
+                limite.setDate(limite.getDate() - 29);
+                incluir = dataVenda >= limite && dataVenda <= hoje;
+            } else if (tipo === 'tudo') {
+                incluir = true;
+            } else if (tipo === 'date' && data) {
+                const dateObj = new Date(data);
+                incluir = isSameDay(dataVenda, getDateOnly(dateObj));
+            } else if (tipo === 'month' && mes !== null && ano !== null) {
+                incluir = isInMonthYear(dataVenda, mes, ano);
+            } else {
+                incluir = true;
+            }
+
+            if (incluir) filtradas.push(v);
+        });
+
+        dadosFiltrados = filtradas;
+        atualizarDashboard();
+    }
+
+    // ============================================================
+    // ATUALIZAR DASHBOARD
+    // ============================================================
+    function atualizarDashboard() {
+        const vendas = dadosFiltrados;
+
+        // Período
+        let periodoTexto = '';
+        const f = currentFilter;
+        if (f.type === 'hoje') periodoTexto = 'Hoje';
+        else if (f.type === 'ontem') periodoTexto = 'Ontem';
+        else if (f.type === '7d') periodoTexto = 'Últimos 7 dias';
+        else if (f.type === '30d') periodoTexto = 'Últimos 30 dias';
+        else if (f.type === 'tudo') periodoTexto = 'Todo período';
+        else if (f.type === 'date' && f.date) {
+            const d = new Date(f.date);
+            periodoTexto = formatDateBR(d);
+        } else if (f.type === 'month' && f.month !== null && f.year !== null) {
+            const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            periodoTexto = `${meses[parseInt(f.month)]} ${f.year}`;
+        }
+        document.getElementById('periodoInfo').querySelector('strong').textContent = `📅 ${periodoTexto}`;
+        document.getElementById('qtdTotal').textContent = vendas.length;
+
+        // Totais por origem
+        let totalGeral = 0, totalSite = 0, totalVendedor = 0, totalFrete = 0;
+        vendas.forEach(v => {
+            totalGeral += v.total;
+            totalFrete += v.frete;
+            if (v.origem === 'site') totalSite += v.valorProduto;
+            else if (v.origem === 'vendedor') totalVendedor += v.valorProduto;
+        });
+
+        document.getElementById('totalGeralLabel').textContent = `R$ ${totalGeral.toFixed(2)}`;
+        document.getElementById('cardTotalGeral').textContent = `R$ ${totalGeral.toFixed(2)}`;
+        document.getElementById('cardTotalSite').textContent = `R$ ${totalSite.toFixed(2)}`;
+        document.getElementById('cardTotalVendedor').textContent = `R$ ${totalVendedor.toFixed(2)}`;
+        document.getElementById('cardTotalFrete').textContent = `R$ ${totalFrete.toFixed(2)}`;
+
+        // Tabela agrupada por dia + origem
+        const grupos = {};
+        vendas.forEach(v => {
+            const chave = v.dateStr;
+            if (!grupos[chave]) {
+                grupos[chave] = {
+                    site: { qtd:0, valor:0, frete:0 },
+                    vendedor: { qtd:0, valor:0, frete:0 }
+                };
+            }
+            const g = grupos[chave][v.origem];
+            g.qtd++;
+            g.valor += v.valorProduto;
+            g.frete += v.frete;
+        });
+
+        const dias = Object.keys(grupos).sort((a,b) => {
+            const da = a.split('/'), db = b.split('/');
+            const d1 = new Date(parseInt(da[2]), parseInt(da[1])-1, parseInt(da[0]));
+            const d2 = new Date(parseInt(db[2]), parseInt(db[1])-1, parseInt(db[0]));
+            return d1 - d2;
+        });
+
+        const tbody = document.getElementById('tabelaBody');
+        if (dias.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="sem-dados">Nenhuma venda no período selecionado.</td></tr>';
+            return;
+        }
+
+        const labels = {
+            site: { label: 'Site', badge: 'badge-site' },
+            vendedor: { label: 'Vendedor', badge: 'badge-vendedor' }
+        };
+
+        let html = '';
+        let grandQtd = 0, grandValor = 0, grandFrete = 0;
+
+        dias.forEach(dia => {
+            const g = grupos[dia];
+            ['site', 'vendedor'].forEach(orig => {
+                const data = g[orig];
+                if (data.qtd === 0) return;
+                const totalLinha = data.valor + data.frete;
+                html += `<tr>
+                    <td class="col-data">${dia}</td>
+                    <td class="col-origem"><span class="badge ${labels[orig].badge}">${labels[orig].label}</span></td>
+                    <td class="col-num">${data.qtd}</td>
+                    <td class="col-valor">R$ ${data.valor.toFixed(2)}</td>
+                    <td class="col-frete">R$ ${data.frete.toFixed(2)}</td>
+                    <td class="col-total">R$ ${totalLinha.toFixed(2)}</td>
+                </tr>`;
+                grandQtd += data.qtd;
+                grandValor += data.valor;
+                grandFrete += data.frete;
+            });
+        });
+
+        html += `<tr class="linha-total">
+            <td colspan="2" style="text-align:right;">TOTAIS</td>
+            <td class="col-num">${grandQtd}</td>
+            <td class="col-valor">R$ ${grandValor.toFixed(2)}</td>
+            <td class="col-frete">R$ ${grandFrete.toFixed(2)}</td>
+            <td class="col-total">R$ ${(grandValor + grandFrete).toFixed(2)}</td>
+        </tr>`;
+
+        tbody.innerHTML = html;
+    }
+
+    // ============================================================
+    // EVENTOS
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const hoje = new Date();
+        document.getElementById('anoSelect').value = hoje.getFullYear().toString();
+
+        document.querySelectorAll('[data-periodo]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('[data-periodo]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                aplicarFiltro(this.dataset.periodo);
+            });
+        });
+
+        document.getElementById('dataPicker').addEventListener('change', function() {
+            if (this.value) {
+                document.querySelectorAll('[data-periodo]').forEach(b => b.classList.remove('active'));
+                aplicarFiltro('date', this.value);
+            }
+        });
+
+        document.getElementById('mesSelect').addEventListener('change', function() {
+            const mes = this.value;
+            const ano = document.getElementById('anoSelect').value;
+            if (mes !== '') {
+                document.querySelectorAll('[data-periodo]').forEach(b => b.classList.remove('active'));
+                aplicarFiltro('month', null, mes, ano);
+            }
+        });
+        document.getElementById('anoSelect').addEventListener('change', function() {
+            const mes = document.getElementById('mesSelect').value;
+            const ano = this.value;
+            if (mes !== '') {
+                document.querySelectorAll('[data-periodo]').forEach(b => b.classList.remove('active'));
+                aplicarFiltro('month', null, mes, ano);
+            }
+        });
+
+        carregarDados();
+    });
+</script>
+</body>
+</html>
